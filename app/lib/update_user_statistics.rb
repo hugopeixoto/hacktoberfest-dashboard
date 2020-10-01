@@ -9,7 +9,10 @@ module UpdateUserStatistics
     def update(user)
       response = HTTParty.get(
         "https://api.github.com/search/issues?q=is:pr+author:#{user.github_username}+created:>=2020-10-01",
-        headers: { Accept: "application/vnd.github.v3+json" },
+        headers: {
+          Accept: "application/vnd.github.v3+json",
+          Authorization: "token #{ENV["GITHUB_TOKEN"]}",
+        },
       )
 
       if user.user_statistic
