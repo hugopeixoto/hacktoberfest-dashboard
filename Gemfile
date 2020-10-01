@@ -9,6 +9,7 @@ gem 'puma'
 gem 'pundit'
 gem 'rails'
 gem 'sass-rails'
+gem 'httparty'
 
 group :development, :test do
   gem 'byebug', platforms: [:mri, :mingw, :x64_mingw]

@@ -1,0 +1,29 @@
+<h1>Hacktoberfest dashboard</h1>
+
+<%= form_with url: register_path do |f| %>
+  <p>Add your github username to the list:</p>
+  <%= f.text_field :github_username %>
+  <%= f.submit 'Register' %>
+<% end %>
+
+<h2>Participants</h2>
+
+<table>
+  <tr>
+    <th>Username</th>
+    <th>Pull requests so far</th>
+  </tr>
+
+  <%- @users.each do |user| %>
+    <tr>
+      <td><%= link_to user.github_username, user.github_url %></td>
+      <td><%= user.user_statistic.pull_requests.nonzero? || "-" %></td>
+    </tr>
+  <%- end %>
+</table>
+
+<h2>Interesting queries</h2>
+
+<p><%= link_to "Open issues in participants' repositories tagged \"hacktoberfest\"", @tagged_issues_url %></p>
+
+<p><%= link_to "Open issues in participants' repositories", @issues_url %></p>
