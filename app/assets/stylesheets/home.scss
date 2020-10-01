@@ -6,3 +6,19 @@ body {
   max-width: 960px;
   margin: 0px auto;
 }
+
+img.github-avatar {
+  max-width: 30px;
+  border-radius: 50%;
+  margin-right: 5px;
+}
+
+.participants th {
+  text-align: left;
+}
+
+.participant-name {
+  display: flex;
+  min-height: 30px;
+  align-items: center;
+}

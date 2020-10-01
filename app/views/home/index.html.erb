@@ -8,7 +8,7 @@
 
 <h2>Participants</h2>
 
-<table>
+<table class="participants">
   <tr>
     <th>Username</th>
     <th>Pull requests so far</th>
@@ -16,7 +16,7 @@
 
   <%- @users.each do |user| %>
     <tr>
-      <td><%= link_to user.github_username, user.github_url %></td>
+      <td class="participant-name"><%= image_tag user.github_avatar_url, class: 'github-avatar', alt: "" %> <%= link_to user.github_username, user.github_url %></td>
       <td><%= user.user_statistic.pull_requests.nonzero? || "-" %></td>
     </tr>
   <%- end %>
