@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_10_04_052814) do
+ActiveRecord::Schema.define(version: 2020_10_24_181619) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "pgcrypto"
@@ -18,22 +18,12 @@ ActiveRecord::Schema.define(version: 2020_10_04_052814) do
 
   create_table "pull_requests", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
     t.string "url", null: false
-    t.uuid "repository_id", null: false
     t.uuid "user_id", null: false
     t.json "payload"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
-    t.index ["repository_id"], name: "index_pull_requests_on_repository_id"
     t.index ["url"], name: "index_pull_requests_on_url", unique: true
     t.index ["user_id"], name: "index_pull_requests_on_user_id"
-  end
-
-  create_table "repositories", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
-    t.string "url", null: false
-    t.json "payload"
-    t.datetime "created_at", precision: 6, null: false
-    t.datetime "updated_at", precision: 6, null: false
-    t.index ["url"], name: "index_repositories_on_url", unique: true
   end
 
   create_table "user_statistics", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
@@ -50,7 +40,6 @@ ActiveRecord::Schema.define(version: 2020_10_04_052814) do
     t.index ["github_username"], name: "index_users_on_github_username", unique: true
   end
 
-  add_foreign_key "pull_requests", "repositories"
   add_foreign_key "pull_requests", "users"
   add_foreign_key "user_statistics", "users"
 end

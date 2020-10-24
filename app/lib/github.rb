@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module Github
   PULL_REQUEST_QUERY = <<~GRAPHQL
     query($nodeId:ID!) {
@@ -6,6 +8,7 @@ module Github
           pullRequests(states: [OPEN, MERGED, CLOSED], last: 100) {
             nodes {
               id
+              databaseId
               title
               body
               url
@@ -43,30 +46,20 @@ module Github
     HTTParty.get(
       user.github_api_url,
       headers: {
-        Accept: "application/vnd.github.mercy-preview+json",
-        Authorization: "token #{ENV["GITHUB_TOKEN"]}",
-      },
-    ).parsed_response
-  end
-
-  def self.repository(repository)
-    HTTParty.get(
-      repository.url,
-      headers: {
-        Accept: "application/vnd.github.mercy-preview+json",
-        Authorization: "token #{ENV["GITHUB_TOKEN"]}",
-      },
+        Accept: 'application/vnd.github.mercy-preview+json',
+        Authorization: "token #{ENV['GITHUB_TOKEN']}"
+      }
     ).parsed_response
   end
 
   def self.pull_requests(node_id)
     HTTParty.post(
-      "https://api.github.com/graphql",
+      'https://api.github.com/graphql',
       body: { query: PULL_REQUEST_QUERY, variables: { nodeId: node_id } }.to_json,
       headers: {
-        Authorization: "bearer #{ENV["GITHUB_TOKEN"]}",
-        'Content-Type': 'application/json',
-      },
+        Authorization: "bearer #{ENV['GITHUB_TOKEN']}",
+        'Content-Type': 'application/json'
+      }
     ).parsed_response
   end
 end
