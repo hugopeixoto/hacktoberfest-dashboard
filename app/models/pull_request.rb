@@ -2,7 +2,7 @@ class PullRequest < ApplicationRecord
   belongs_to :repository
   belongs_to :user
 
-  OPTIN_CUTOFF = DateTime.parse("2020-11-03T12:00:00Z")
+  OPTIN_CUTOFF = DateTime.parse("2020-10-03T12:00:00Z")
 
   def counts_for_hacktoberfest?
     DateTime.parse(payload["createdAt"]) < OPTIN_CUTOFF || (
