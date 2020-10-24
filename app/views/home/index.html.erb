@@ -16,8 +16,18 @@
 
   <%- @users.each do |user| %>
     <tr>
-      <td class="participant-name"><%= image_tag user.github_avatar_url, class: 'github-avatar', alt: "" %> <%= link_to user.github_username, user.github_url %></td>
-      <td><%= user.user_statistic.pull_requests.nonzero? || "-" %></td>
+      <td class="participant-name">
+        <%= image_tag user.github_avatar_url, class: 'github-avatar', alt: "" %>
+        <%= link_to user.github_username, user.github_url %>
+      </td>
+      <td class="pull-request-count">
+        <%= user.pull_requests.count(&:counts_for_hacktoberfest?).nonzero? || "-" %>
+      </td>
+      <td>
+        <%- user.pull_requests.select(&:counts_for_hacktoberfest?).each do |pr| %>
+          <%= link_to pr.payload["title"], pr.payload["url"] %>
+        <%- end %>
+      </td>
     </tr>
   <%- end %>
 </table>

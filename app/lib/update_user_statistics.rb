@@ -1,25 +1,45 @@
 module UpdateUserStatistics
+  START_DATE = DateTime.parse("2020-10-01T00:00:00Z")
+
   class<<self
-    def update_all
-      User.active.each do |user|
-        update user
-      end
+    def update_users
+      User
+        .active
+        .where(payload: nil)
+        .each do |user|
+          user.update(payload: Github.user(user))
+        end
     end
 
-    def update(user)
-      response = HTTParty.get(
-        "https://api.github.com/search/issues?q=is:pr+author:#{user.github_username}+created:>=2020-10-01",
-        headers: {
-          Accept: "application/vnd.github.v3+json",
-          Authorization: "token #{ENV["GITHUB_TOKEN"]}",
-        },
-      )
+    def new_pull_requests
+      User.active.each(&method(:new_pull_requests_for_user))
+    end
 
-      if user.user_statistic
-        user.user_statistic.update!(pull_requests: response["total_count"])
-      else
-        UserStatistic.create!(user: user, pull_requests: response["total_count"])
-      end
+    def update_repositories
+      Repository.all.each(&method(:update_repository))
+    end
+
+    def update_repository(repository)
+      return if repository.payload && repository.updated_at < 5.minutes.ago
+
+      repository.update(payload: Github.repository(repository))
+    end
+
+    def new_pull_requests_for_user(user)
+      Github
+        .pull_requests(user.github_node_id)
+        .dig("data", "node", "pullRequests", "nodes")
+        .select { |pr| START_DATE < DateTime.parse(pr["createdAt"]) }
+        .each do |pr|
+          repository = Repository
+            .where(url: pr["repository"]["url"])
+            .first_or_create
+
+          PullRequest
+            .where(url: pr["url"], user: user, repository: repository)
+            .first_or_create(payload: pr)
+            .update(payload: pr)
+        end
     end
   end
 end
