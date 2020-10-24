@@ -1,8 +1,6 @@
 # frozen_string_literal: true
 
 module UpdateUserStatistics
-  START_DATE = DateTime.parse('2020-10-01T00:00:00Z')
-
   class<<self
     def update_users
       User
@@ -31,7 +29,6 @@ module UpdateUserStatistics
       Github
         .pull_requests(user.github_node_id)
         .dig('data', 'node', 'pullRequests', 'nodes')
-        .select { |pr| START_DATE < DateTime.parse(pr['createdAt']) }
         .each do |pr|
           PullRequest
             .where(url: pr['url'], user: user)
