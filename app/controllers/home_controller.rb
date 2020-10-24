@@ -25,8 +25,7 @@ class HomeController < ApplicationController
   def register
     user = User.create!(params.permit(:github_username))
 
-    UpdateUserStatistics.update(user)
-    user.update(active: true)
+    user.update(active: true, payload: Github.user(user))
 
     redirect_to root_path
   end
